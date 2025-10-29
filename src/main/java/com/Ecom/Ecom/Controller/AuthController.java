@@ -86,6 +86,7 @@ public class AuthController {
             String token=jwtService.generatetoken(uu);
             Cookie cc=new Cookie("token",token);
             cc.setHttpOnly(true);
+            cc.setSecure(true);
             cc.setPath("/");
             cc.setAttribute("SameSite","none");
             cc.setMaxAge(24*60*60);
@@ -93,6 +94,7 @@ public class AuthController {
             Cookie roleCookie = new Cookie("role", uu.getRole().name());
             roleCookie.setHttpOnly(false);
             roleCookie.setPath("/");
+            roleCookie.setSecure(true);
             roleCookie.setAttribute("SameSite","none");
             roleCookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(roleCookie);
