@@ -254,6 +254,7 @@ public class AuthController {
             Cookie cookie = new Cookie(name, null);
             cookie.setPath("/");
             cookie.setMaxAge(0);
+            cookie.setSecure(true);
             cookie.setAttribute("SameSite","none");
             if (name.equals("token")) {
                 cookie.setHttpOnly(true);
