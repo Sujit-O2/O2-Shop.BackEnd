@@ -87,11 +87,13 @@ public class AuthController {
             Cookie cc=new Cookie("token",token);
             cc.setHttpOnly(true);
             cc.setPath("/");
+            cc.setAttribute("SameSite","none");
             cc.setMaxAge(24*60*60);
             httpServletResponse.addCookie(cc);
             Cookie roleCookie = new Cookie("role", uu.getRole().name());
             roleCookie.setHttpOnly(false);
             roleCookie.setPath("/");
+            roleCookie.setAttribute("SameSite","none");
             roleCookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(roleCookie);
 
@@ -250,6 +252,7 @@ public class AuthController {
             Cookie cookie = new Cookie(name, null);
             cookie.setPath("/");
             cookie.setMaxAge(0);
+            cookie.setAttribute("SameSite","none");
             if (name.equals("token")) {
                 cookie.setHttpOnly(true);
             } else {
