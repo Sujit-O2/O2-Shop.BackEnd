@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -84,20 +85,25 @@ public class AuthController {
         if(aa.isAuthenticated()){
             User uu = service.getUser(ll.getGmail());
             String token=jwtService.generatetoken(uu);
-            Cookie cc=new Cookie("token",token);
-            cc.setHttpOnly(true);
-            cc.setSecure(true);
-            cc.setPath("/");
-            cc.setAttribute("SameSite","none");
-            cc.setMaxAge(24*60*60);
-            httpServletResponse.addCookie(cc);
-            Cookie roleCookie = new Cookie("role", uu.getRole().name());
-            roleCookie.setHttpOnly(false);
-            roleCookie.setPath("/");
-            roleCookie.setSecure(true);
-            roleCookie.setAttribute("SameSite","none");
-            roleCookie.setMaxAge(24 * 60 * 60);
-            httpServletResponse.addCookie(roleCookie);
+
+            ResponseCookie cookie = ResponseCookie.from("token", token)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")  // Correctly sets SameSite=None
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .build();
+            httpServletResponse.addHeader("Set-Cookie", cookie.toString());
+
+            ResponseCookie roleCookie = ResponseCookie.from("role", uu.getRole().name())
+                    .httpOnly(false)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .build();
+            httpServletResponse.addHeader("Set-Cookie", roleCookie.toString());
+
 
             return ResponseEntity.ok(null);
         } else {
