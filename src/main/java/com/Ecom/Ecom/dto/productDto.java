@@ -12,7 +12,7 @@ public class productDto {
     private int price;
     private String stock;
     private int status;
-    private String img;
+    private byte[] img;
 
 
 

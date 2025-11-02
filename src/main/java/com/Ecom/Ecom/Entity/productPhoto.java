@@ -10,8 +10,8 @@ public class productPhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Lob
-    private String photo;
+    @Column(name = "photo", columnDefinition = "BYTEA")
+    private byte[] photo;
 
 
     @ManyToOne

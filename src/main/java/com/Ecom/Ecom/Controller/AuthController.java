@@ -63,7 +63,7 @@ public class AuthController {
         dp.setStatus(pp.getStatus());
         dp.setStock(String.valueOf(pp.getStock()));
         dp.setDescription(pp.getDescription());
-        List<String> photos = pp.getPhotos().stream()
+        List<byte[]> photos = pp.getPhotos().stream()
                 .map(productPhoto::getPhoto)
                 .collect(Collectors.toList());
         dp.setImg(photos);
