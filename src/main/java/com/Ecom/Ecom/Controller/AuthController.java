@@ -78,22 +78,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest ll, HttpServletResponse httpServletResponse){
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest ll, HttpServletResponse httpServletResponse) {
         Authentication aa = auth.authenticate(
                 new UsernamePasswordAuthenticationToken(ll.getGmail(), ll.getPass())
         );
-        if(aa.isAuthenticated()){
-            User uu = service.getUser(ll.getGmail());
-            String token=jwtService.generatetoken(uu);
 
-            ResponseCookie cookie = ResponseCookie.from("token", token)
+        if (aa.isAuthenticated()) {
+            User uu = service.getUser(ll.getGmail());
+            String token = jwtService.generatetoken(uu);
+
+            ResponseCookie tokenCookie = ResponseCookie.from("token", token)
                     .httpOnly(true)
                     .secure(true)
-                    .sameSite("None")  // Correctly sets SameSite=None
+                    .sameSite("None")
                     .path("/")
                     .maxAge(24 * 60 * 60)
                     .build();
-            httpServletResponse.addHeader("Set-Cookie", cookie.toString());
+            httpServletResponse.addHeader("Set-Cookie", tokenCookie.toString());
 
             ResponseCookie roleCookie = ResponseCookie.from("role", uu.getRole().name())
                     .httpOnly(false)
@@ -104,12 +105,14 @@ public class AuthController {
                     .build();
             httpServletResponse.addHeader("Set-Cookie", roleCookie.toString());
 
-
-            return ResponseEntity.ok(null);
+            Map<String, String> response = new HashMap<>();
+            response.put("role", uu.getRole().name());
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 
     @PostMapping("/checkout/session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, Object> req, Authentication authentication) {
