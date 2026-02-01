@@ -72,7 +72,7 @@ public class WebSecurityconfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173","https://o2-shop-frontend.onrender.com"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173","https://o2-shop-front-end.vercel.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
