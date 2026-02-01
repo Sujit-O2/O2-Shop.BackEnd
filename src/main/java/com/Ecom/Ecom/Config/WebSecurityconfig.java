@@ -37,7 +37,7 @@ public class WebSecurityconfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -47,6 +47,7 @@ public class WebSecurityconfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 //                .formLogin(Customizer.withDefaults())
 //                .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/login", "/auth/signUp","/auth/products/**","/auth/mail/newSus").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -63,7 +64,7 @@ public class WebSecurityconfig {
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(Customizer.withDefaults())
+//                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 

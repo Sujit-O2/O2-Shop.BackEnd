@@ -71,17 +71,22 @@ public class AuthController {
 
     @PostMapping("/signUp")
     public ResponseEntity<User> user(@RequestBody RegisterDto u){
+        System.out.println(u.getPassword());
         User user = service.setUser(u);
+        System.out.println(user.getEmail()+user.getPassword());
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest ll, HttpServletResponse httpServletResponse){
+        System.out.println(ll.getGmail()+ll.getPass());
         Authentication aa = auth.authenticate(
                 new UsernamePasswordAuthenticationToken(ll.getGmail(), ll.getPass())
         );
+        System.out.println(aa.isAuthenticated());
         if(aa.isAuthenticated()){
             User uu = service.getUser(ll.getGmail());
+            System.out.println(uu.getEmail());
             String token=jwtService.generatetoken(uu);
             Cookie cc=new Cookie("token",token);
             cc.setHttpOnly(true);

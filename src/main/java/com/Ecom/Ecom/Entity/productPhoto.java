@@ -10,7 +10,7 @@ public class productPhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Lob
+//    @Lob
     @Column(name = "photo", columnDefinition = "BYTEA")
     private String photo;
 

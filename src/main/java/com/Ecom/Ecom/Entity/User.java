@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @Lob
+//    @Lob
     @Column(name = "img", columnDefinition = "BYTEA")
     private byte[] img;
     private String address;
