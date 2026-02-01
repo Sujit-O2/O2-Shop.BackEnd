@@ -11,7 +11,7 @@ public class productPhoto {
     private int id;
 
     @Lob
-//    @Column(name = "photo", columnDefinition = "BYTEA")
+    @Column(name = "photo", columnDefinition = "BYTEA")
     private String photo;
 
 
