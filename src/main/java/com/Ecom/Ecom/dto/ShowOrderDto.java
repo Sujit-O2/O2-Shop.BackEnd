@@ -25,7 +25,7 @@ public class ShowOrderDto {
     private LocalDate deDate;
 
     private String pname;
-    private byte[] img;
+    private String img;
 
 
     public List<ShowOrderDto> GetDtos(List<BuyProduct> bb,ProductService productService) {

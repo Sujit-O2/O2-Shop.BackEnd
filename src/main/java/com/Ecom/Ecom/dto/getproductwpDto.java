@@ -13,5 +13,5 @@ public class getproductwpDto {
     private int price;
     private String stock;
     private int status;
-    private List<byte[]> img;
+    private List<String> img;
 }

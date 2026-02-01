@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "users")
+//@Table(name = "users")
 @Data
 public class User {
 
@@ -23,7 +23,8 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @Column(name = "img", columnDefinition = "bytea")
+    @Lob
+//    @Column(name = "img", columnDefinition = "BYTEA")
     private byte[] img;
     private String address;
 

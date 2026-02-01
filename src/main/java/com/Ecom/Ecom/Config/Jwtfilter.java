@@ -64,6 +64,7 @@ public class Jwtfilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
+            // ⚠️ Optional: log token parsing failure
             System.out.println("JWT parsing failed: " + e.getMessage());
         }
 
