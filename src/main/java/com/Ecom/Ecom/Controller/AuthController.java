@@ -87,22 +87,14 @@ public class AuthController {
             cc.setHttpOnly(true);
             cc.setSecure(true);
             cc.setPath("/");
-<<<<<<< HEAD
             cc.setAttribute("SameSite","none");
-=======
-            cc.setAttribute("SameSite","Lax");
->>>>>>> 8fe284ea518934220cef67359ba829c2bf0de064
             cc.setMaxAge(24*60*60);
             httpServletResponse.addCookie(cc);
             Cookie roleCookie = new Cookie("role", uu.getRole().name());
             roleCookie.setHttpOnly(false);
             roleCookie.setPath("/");
             roleCookie.setSecure(true);
-<<<<<<< HEAD
             roleCookie.setAttribute("SameSite","none");
-=======
-            roleCookie.setAttribute("SameSite","Lax");
->>>>>>> 8fe284ea518934220cef67359ba829c2bf0de064
             roleCookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(roleCookie);
 
