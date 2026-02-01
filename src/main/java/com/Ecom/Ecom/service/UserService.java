@@ -23,7 +23,7 @@ public class UserService {
         u.setEmail(u1.getEmail());
         u.setRole(u1.getRole() != null ? UserRole.valueOf(u1.getRole()) : UserRole.USER);
         u.setPassword(passwordEncoder.encode(u1.getPassword()));
-        u.setImg(null);
+        u.setImg(new byte[0]);
         return rr.save(u);
     }
 

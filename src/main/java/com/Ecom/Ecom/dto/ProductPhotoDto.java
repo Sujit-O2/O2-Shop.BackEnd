@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ProductPhotoDto {
-    private byte[] photo;
+    private String photo;
 }

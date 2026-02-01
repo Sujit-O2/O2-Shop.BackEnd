@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +41,6 @@ public class AuthController {
     @Autowired private ProductService productService;
     @Autowired private BuyProductsRepo buyProductsRepo;
 
-    // Inject from application.properties or environment
     @Value("${razor.api.key}")
     private String razorpayKeyId;
 
@@ -64,7 +62,7 @@ public class AuthController {
         dp.setStatus(pp.getStatus());
         dp.setStock(String.valueOf(pp.getStock()));
         dp.setDescription(pp.getDescription());
-        List<byte[]> photos = pp.getPhotos().stream()
+        List<String> photos = pp.getPhotos().stream()
                 .map(productPhoto::getPhoto)
                 .collect(Collectors.toList());
         dp.setImg(photos);
@@ -78,41 +76,33 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest ll, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<Void> login(@RequestBody LoginRequest ll, HttpServletResponse httpServletResponse){
         Authentication aa = auth.authenticate(
                 new UsernamePasswordAuthenticationToken(ll.getGmail(), ll.getPass())
         );
-
-        if (aa.isAuthenticated()) {
+        if(aa.isAuthenticated()){
             User uu = service.getUser(ll.getGmail());
-            String token = jwtService.generatetoken(uu);
+            String token=jwtService.generatetoken(uu);
+            Cookie cc=new Cookie("token",token);
+            cc.setHttpOnly(true);
+            cc.setSecure(true);
+            cc.setPath("/");
+            cc.setAttribute("SameSite","Lax");
+            cc.setMaxAge(24*60*60);
+            httpServletResponse.addCookie(cc);
+            Cookie roleCookie = new Cookie("role", uu.getRole().name());
+            roleCookie.setHttpOnly(false);
+            roleCookie.setPath("/");
+            roleCookie.setSecure(true);
+            roleCookie.setAttribute("SameSite","Lax");
+            roleCookie.setMaxAge(24 * 60 * 60);
+            httpServletResponse.addCookie(roleCookie);
 
-            ResponseCookie tokenCookie = ResponseCookie.from("token", token)
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
-                    .path("/")
-                    .maxAge(24 * 60 * 60)
-                    .build();
-            httpServletResponse.addHeader("Set-Cookie", tokenCookie.toString());
-
-            ResponseCookie roleCookie = ResponseCookie.from("role", uu.getRole().name())
-                    .httpOnly(false)
-                    .secure(true)
-                    .sameSite("None")
-                    .path("/")
-                    .maxAge(24 * 60 * 60)
-                    .build();
-            httpServletResponse.addHeader("Set-Cookie", roleCookie.toString());
-
-            Map<String, String> response = new HashMap<>();
-            response.put("role", uu.getRole().name());
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(null);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.badRequest().build();
         }
     }
-
 
     @PostMapping("/checkout/session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, Object> req, Authentication authentication) {
@@ -258,22 +248,28 @@ public class AuthController {
     }
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        String[] cookies = {"token", "role"};
-        for (String name : cookies) {
-            Cookie cookie = new Cookie(name, null);
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            cookie.setSecure(true);
-            cookie.setAttribute("SameSite","none");
-            if (name.equals("token")) {
-                cookie.setHttpOnly(true);
-            } else {
-                cookie.setHttpOnly(false);
-            }
-            response.addCookie(cookie);
-        }
-        return ResponseEntity.ok("All cookies cleared");
-    }
+        // Add cache headers to prevent caching
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
 
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(0);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setAttribute("SameSite", "Lax");
+        response.addCookie(tokenCookie);
+
+        Cookie roleCookie = new Cookie("role", null);
+        roleCookie.setPath("/");
+        roleCookie.setMaxAge(0);
+        roleCookie.setHttpOnly(false);
+        roleCookie.setSecure(true);
+        roleCookie.setAttribute("SameSite", "Lax");
+        response.addCookie(roleCookie);
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
 
 }

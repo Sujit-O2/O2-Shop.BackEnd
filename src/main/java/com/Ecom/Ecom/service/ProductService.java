@@ -69,7 +69,7 @@ public class ProductService {
         return new ProductMapper().toDto(product);
     }
 
-    public void addPhotoToProduct(int productId, byte[] photo, String sellerEmail) {
+    public void addPhotoToProduct(int productId, String photo, String sellerEmail) {
         Products product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         if (!product.getSellername().equals(sellerEmail)) {

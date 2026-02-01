@@ -2,13 +2,19 @@ package com.Ecom.Ecom.service;
 
 import com.Ecom.Ecom.Entity.User;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 @Service
 public class JwtService {
-    private  SecretKey key=Jwts.SIG.HS256.key().build();
+    private final SecretKey key;
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        this.key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    }
 
 
     public String generatetoken(User a){
@@ -17,7 +23,7 @@ public class JwtService {
                 .claim("role",a.getRole())
                 .subject(a.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*60*30))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*60))
                 .signWith(key)
                 .compact();
 
