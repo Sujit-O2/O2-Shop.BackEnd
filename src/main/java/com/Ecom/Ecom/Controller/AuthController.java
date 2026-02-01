@@ -41,7 +41,6 @@ public class AuthController {
     @Autowired private ProductService productService;
     @Autowired private BuyProductsRepo buyProductsRepo;
 
-    // Inject from application.properties or environment
     @Value("${razor.api.key}")
     private String razorpayKeyId;
 
@@ -88,14 +87,22 @@ public class AuthController {
             cc.setHttpOnly(true);
             cc.setSecure(true);
             cc.setPath("/");
+<<<<<<< HEAD
             cc.setAttribute("SameSite","none");
+=======
+            cc.setAttribute("SameSite","Lax");
+>>>>>>> 8fe284ea518934220cef67359ba829c2bf0de064
             cc.setMaxAge(24*60*60);
             httpServletResponse.addCookie(cc);
             Cookie roleCookie = new Cookie("role", uu.getRole().name());
             roleCookie.setHttpOnly(false);
             roleCookie.setPath("/");
             roleCookie.setSecure(true);
+<<<<<<< HEAD
             roleCookie.setAttribute("SameSite","none");
+=======
+            roleCookie.setAttribute("SameSite","Lax");
+>>>>>>> 8fe284ea518934220cef67359ba829c2bf0de064
             roleCookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(roleCookie);
 
@@ -249,22 +256,28 @@ public class AuthController {
     }
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        String[] cookies = {"token", "role"};
-        for (String name : cookies) {
-            Cookie cookie = new Cookie(name, null);
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            cookie.setSecure(true);
-            cookie.setAttribute("SameSite","none");
-            if (name.equals("token")) {
-                cookie.setHttpOnly(true);
-            } else {
-                cookie.setHttpOnly(false);
-            }
-            response.addCookie(cookie);
-        }
-        return ResponseEntity.ok("All cookies cleared");
-    }
+        // Add cache headers to prevent caching
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
 
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(0);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setAttribute("SameSite", "Lax");
+        response.addCookie(tokenCookie);
+
+        Cookie roleCookie = new Cookie("role", null);
+        roleCookie.setPath("/");
+        roleCookie.setMaxAge(0);
+        roleCookie.setHttpOnly(false);
+        roleCookie.setSecure(true);
+        roleCookie.setAttribute("SameSite", "Lax");
+        response.addCookie(roleCookie);
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
 
 }

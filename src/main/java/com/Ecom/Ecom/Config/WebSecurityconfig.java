@@ -2,6 +2,7 @@ package com.Ecom.Ecom.Config;
 
 import com.Ecom.Ecom.dto.userProfileDto;
 import com.Ecom.Ecom.service.UserDetSer;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,16 +48,22 @@ public class WebSecurityconfig {
 //                .formLogin(Customizer.withDefaults())
 //                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/login", "/auth/signUp","/auth/logout","/auth/products/**","/auth/mail/newSus").permitAll()
+                        .requestMatchers("/auth/login", "/auth/signUp","/auth/products/**","/auth/mail/newSus").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/seller/**").hasRole("SELLER")
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })
                 )
+
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
@@ -81,8 +88,7 @@ public class WebSecurityconfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

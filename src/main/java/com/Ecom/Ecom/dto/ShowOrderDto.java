@@ -3,9 +3,6 @@ import com.Ecom.Ecom.Entity.BuyProduct;
 import com.Ecom.Ecom.Entity.Products;
 import com.Ecom.Ecom.service.ProductService;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SpringSessionContext;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

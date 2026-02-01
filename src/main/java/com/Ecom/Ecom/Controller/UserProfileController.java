@@ -5,6 +5,7 @@ import com.Ecom.Ecom.Repo.UserRepo;
 import com.Ecom.Ecom.dto.userProfileDto;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +38,10 @@ public class UserProfileController {
             profile.setProfileImageBase64(Base64.getEncoder().encodeToString(user.getImg()));
         }
 
-        return ResponseEntity.ok(profile);
+        return  ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .header("Expires", "0")
+                .body(profile);
     }
 }
